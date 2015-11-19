@@ -14,4 +14,4 @@ Realm components are React components, so they are interoperable with non-Realm 
 
 - Because you should use Elm instead
 
-Docs in progress.
+Docs in progress. In the meantime, see this [test](https://github.com/acdlite/realm/blob/master/src/__tests__/realm-test.js) for an example.
