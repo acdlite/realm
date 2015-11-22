@@ -1,8 +1,10 @@
 # Realm
 
-A total rip-off of the Elm architecture, in React.
+A total rip-off of the Elm Architecture, in React.
 
 Realm components are React components, so they are interoperable with non-Realm components. Use Realm for your entire app, or just in specific places.
+
+See also [Realm Redux](https://github.com/acdlite/realm-redux), which enables the use of Redux extensions with Realm components.
 
 ### Why you should use this library
 
