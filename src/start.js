@@ -19,7 +19,7 @@ const start = BaseComponent => {
     shouldComponentUpdate(nextProps, nextState) {
       return (
         !shallowEqual(nextProps, this.props) ||
-        !shallowEqual(nextState, this.state)
+        nextState.model !== this.state.model
       )
     }
 
