@@ -1,6 +1,6 @@
 # Realm
 
-A total rip-off of the Elm Architecture, in React.
+A total rip-off of the [Elm Architecture](https://github.com/evancz/elm-architecture-tutorial/), in React.
 
 Realm components are React components, so they are interoperable with non-Realm components. Use Realm for your entire app, or just in specific places.
 
