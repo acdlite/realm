@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
+    "test": "karma start --single-run",
     "test:watch": "karma start"
   },
   "keywords": [
