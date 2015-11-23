@@ -27,7 +27,6 @@ const realm = ({ init, update, view }) => {
   }
 
   Realm.displayName = wrapDisplayName(Component, 'realm')
-  Realm.isRealmComponent = true
   Realm.init = init
   Realm.update = update
   Realm.view = view
