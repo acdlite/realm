@@ -45,6 +45,7 @@
     "react-addons-test-utils": "^0.14.2",
     "react-dom": "^0.14.2",
     "sinon": "^1.17.2",
+    "teaspoon": "^5.0.1",
     "webpack": "^1.12.6"
   },
   "dependencies": {
