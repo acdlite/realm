@@ -1,32 +1,24 @@
 import { Component, PropTypes } from 'react'
 import wrapDisplayName from 'recompose/wrapDisplayName'
-import shallowEqual from 'recompose/shallowEqual'
 import createElement from 'recompose/createElement'
-import omit from 'lodash/object/omit'
 
-const omitDispatch = props => omit(props, 'dispatch')
-
-const realm = ({ init, update, view }) => {
+const createRealmComponent = ({ init, update, view }) => {
   class Realm extends Component {
-    constructor() {
-      super()
-      this.dispatch = action => this.props.dispatch(action)
+    constructor(props) {
+      super(props)
     }
 
-    shouldComponentUpdate(nextProps) {
-      return !shallowEqual(omitDispatch(nextProps), omitDispatch(this.props))
-    }
+    dispatch = action => this.props.dispatch(action)
 
     render() {
       return createElement(view, {
-        dispatch: this.dispatch,
-        model: this.props.model,
-        ...omitDispatch(this.props)
+        ...this.props,
+        dispatch: this.dispatch
       })
     }
   }
 
-  Realm.displayName = wrapDisplayName(Component, 'realm')
+  Realm.displayName = wrapDisplayName(Component, 'createRealmComponent')
   Realm.init = init
   Realm.update = update
   Realm.view = view
@@ -39,4 +31,4 @@ const realm = ({ init, update, view }) => {
   return Realm
 }
 
-export default realm
+export default createRealmComponent

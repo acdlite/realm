@@ -3,12 +3,12 @@ import wrapDisplayName from 'recompose/wrapDisplayName'
 import createElement from 'recompose/createElement'
 import shallowEqual from 'recompose/shallowEqual'
 
-const start = BaseComponent => {
+const start = (initInput, BaseComponent) => {
   class Start extends Component {
     constructor() {
       super()
 
-      this.state = { model: BaseComponent.init() }
+      this.state = { model: BaseComponent.init(initInput) }
 
       this.dispatch = action =>
         this.setState(({ model }) => ({
