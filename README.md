@@ -39,7 +39,7 @@ const realm({
 })
 
 // Either compose with other Realm components, or use `start()`
-const CounterApp = start(Counter)
+const CounterApp = start(0, Counter)
 ReactDOM.render(<CounterApp />)
 ```
 
