@@ -55,7 +55,7 @@ See also [Realm Redux](https://github.com/acdlite/realm-redux), which enables th
 ### Why you shouldn't use this library
 
 - Because you should use Elm instead
-- Because it's in **extreme alpha** and not yet ready for public use. I intend to get it ready in time for my React Conf talk on February 23.
+- Because it's in **extreme alpha** and not yet ready for public use. I intend to get it ready in time for my [React Conf talk](http://conf.reactjs.com/schedule.html#back-to-react) on February 23.
 
 Note that while Realm is an implementation of the Elm Architecture, it does not and cannot claim to replicate the entirety of Elm the language.
 
