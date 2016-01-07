@@ -1,38 +1,31 @@
-import { Component } from 'react'
+import React, { Component } from 'react'
 import wrapDisplayName from 'recompose/wrapDisplayName'
-import createElement from 'recompose/createElement'
-import shallowEqual from 'recompose/shallowEqual'
 
-const start = (initInput, BaseComponent) => {
+const start = ({ model: initialModel, view: View, update }) => {
   class Start extends Component {
-    constructor() {
-      super()
-
-      this.state = { model: BaseComponent.init(initInput) }
-
-      this.dispatch = action =>
-        this.setState(({ model }) => ({
-          model: BaseComponent.update(model, action)
-        }))
+    constructor(props) {
+      super(props)
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-      return (
-        !shallowEqual(nextProps, this.props) ||
-        nextState.model !== this.state.model
-      )
-    }
+    state = { model: initialModel }
+
+    dispatch = action =>
+      this.setState(({ model }) => ({
+        model: update(model, action)
+      }))
 
     render() {
-      return createElement(BaseComponent, {
-        dispatch: this.dispatch,
-        model: this.state.model,
-        ...this.props
-      })
+      return (
+        <View
+          dispatch={this.dispatch}
+          model={this.state.model}
+          {...this.props}
+        />
+      )
     }
   }
 
-  Start.displayName = wrapDisplayName(BaseComponent, 'start')
+  Start.displayName = wrapDisplayName(View, 'start')
 
   return Start
 }

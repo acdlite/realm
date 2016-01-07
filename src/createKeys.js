@@ -1,9 +1,6 @@
-const createKeys = input => {
-  const key = JSON.stringify(input)
-  return {
-    key,
-    realmKey: key
-  }
-}
+const createKeys = key => ({
+  key,
+  realmKey: key
+})
 
 export default createKeys

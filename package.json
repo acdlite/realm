@@ -51,6 +51,6 @@
   },
   "dependencies": {
     "lodash": "^3.10.1",
-    "recompose": "^0.11.1"
+    "recompose": "^0.14.2"
   }
 }

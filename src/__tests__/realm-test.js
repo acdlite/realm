@@ -1,17 +1,17 @@
 import React from 'react'
 import { expect } from 'chai'
-import { renderIntoDocument } from 'react-addons-test-utils'
 import $ from 'teaspoon'
-import { realm, keyed, createKeys, start, forward } from '../'
+import { start, forward, keyed, createKeys } from '../'
+import { toClass } from 'recompose'
 
 describe('realm', () => {
   const INCREMENT = 'INCREMENT'
   const DECREMENT = 'DECREMENT'
 
-  const Count = props => <div {...props} />
-  const Button = props => <button {...props} />
+  const Count = toClass('div')
+  const Button = toClass('button')
 
-  const Counter = realm({
+  const Counter = {
     init: (initialCount = 0) => initialCount,
 
     update: (count, action) => {
@@ -25,19 +25,19 @@ describe('realm', () => {
       }
     },
 
-    view: ({ model: count, dispatch }) => (
+    view: toClass(({ model: count, dispatch }) =>
       <div>
         <Count count={count} />
         <Button onClick={() => dispatch({ type: INCREMENT })}>+</Button>
         <Button onClick={() => dispatch({ type: DECREMENT })}>-</Button>
       </div>
     )
-  })
+  }
 
   const TOP = 'TOP'
   const BOTTOM = 'BOTTOM'
 
-  const CounterPair = realm({
+  const CounterPair = {
     init: () => ({
       top: Counter.init(),
       bottom: Counter.init()
@@ -60,22 +60,32 @@ describe('realm', () => {
       }
     },
 
-    view: ({ model, dispatch }) =>
+    view: toClass(({ model, dispatch }) =>
       <div>
-        <Counter dispatch={forward(dispatch, TOP)} model={model.top} />
-        <Counter dispatch={forward(dispatch, BOTTOM)} model={model.bottom} />
+        <Counter.view
+          dispatch={forward(dispatch, TOP)}
+          model={model.top}
+        />
+        <Counter.view
+          dispatch={forward(dispatch, BOTTOM)}
+          model={model.bottom}
+        />
       </div>
+    )
+  }
+
+  const CounterApp = start({
+    model: CounterPair.init(),
+    update: CounterPair.update,
+    view: CounterPair.view
   })
 
-  const CounterApp = start(null, CounterPair)
-
   it('works', () => {
-    const $tree = $(renderIntoDocument(<CounterApp />))
+    const $tree = $(<CounterApp />).render()
     const $counts = $tree.find(Count)
     const $buttons = $tree.find(Button)
     const $top = $counts[0]
     const $bottom = $counts[1]
-
     const getBottomCount = () => $bottom.props.count
     const getTopCount = () => $top.props.count
 
@@ -116,7 +126,7 @@ describe('realm', () => {
 
     const KeyedCounter = keyed(Counter)
 
-    const CounterList = realm({
+    const CounterList = {
       init: () => ({
         idCounter: 2,
         things: [{
@@ -153,52 +163,51 @@ describe('realm', () => {
         }
       },
 
-      view: ({ model, dispatch }) =>
+      view: toClass(({ model, dispatch }) =>
         <div>
           {model.things.map(thing =>
-            <KeyedCounter
+            <KeyedCounter.view
               {...createKeys(thing.id)}
-              init={thing.count}
+              init={() => Counter.init(thing.count)}
               model={model[COUNTERS]}
               dispatch={forward(dispatch, COUNTERS)}
             />
           )}
         </div>
+      )
+    }
+
+    const CounterListApp = start({
+      model: CounterList.init(),
+      update: CounterList.update,
+      view: CounterList.view
     })
 
-    const CounterListApp = start(null, CounterList)
-
-    it('passes init prop to base init() on mount', () => {
-      const tree = renderIntoDocument(<CounterListApp />)
-      const $tree = $(tree)
-      const $Counters = $tree.find(Counter)
-      expect($Counters.length).to.equal(1)
-      expect($Counters[0].props.model).to.equal(7)
+    it('uses init prop', () => {
+      const $tree = $(<CounterListApp />).render()
+      const $counts = $tree.find(Count)
+      expect($counts.length).to.equal(1)
+      expect($counts[0].props.count).to.equal(7)
     })
 
     it('responds to updates', () => {
-      const tree = renderIntoDocument(<CounterListApp />)
-      const $tree = $(tree)
-      const $list = $tree.find(CounterList)[0]
+      const $tree = $(<CounterListApp />).render()
+      const $list = $tree.find(CounterList.view)[0]
+      expect($list.props.model.things.length).to.equal(1)
+      expect($list.props.model[COUNTERS]).to.eql({ 1: 7 })
       $list.props.dispatch({ type: ADD_THING })
-      const $Counters = $tree.find(Counter)
-      expect($Counters.length).to.equal(2)
-      const $newCounter = $Counters[1]
-      expect($newCounter.props.model).to.equal(0)
-      $newCounter.props.dispatch({ type: INCREMENT })
-      expect($newCounter.props.model).to.equal(1)
+      expect($list.props.model.things.length).to.equal(2)
+      expect($list.props.model[COUNTERS]).to.eql({ 1: 7, 2: 0 })
     })
 
     it('removes keyed state on unmount', () => {
-      const tree = renderIntoDocument(<CounterListApp />)
-      const $tree = $(tree)
-      let $Counters = $tree.find(Counter)
-      expect($Counters.length).to.equal(1)
-      expect($Counters[0].props.model).to.equal(7)
-      const $list = $tree.find(CounterList)[0]
-      $list.dispatch({ type: REMOVE_THING, payload: 1 })
-      $Counters = $tree.find(Counter)
-      expect($Counters.length).to.equal(0)
+      const $tree = $(<CounterListApp />).render()
+      const $list = $tree.find(CounterList.view)[0]
+      expect($list.props.model.things.length).to.equal(1)
+      expect($list.props.model[COUNTERS]).to.eql({ 1: 7 })
+      $list.props.dispatch({ type: REMOVE_THING, payload: 1 })
+      expect($list.props.model.things.length).to.equal(0)
+      expect($list.props.model[COUNTERS]).to.eql({})
     })
   })
 })
